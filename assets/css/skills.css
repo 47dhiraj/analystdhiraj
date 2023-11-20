@@ -1,8 +1,16 @@
 .skill-container {
 
-    margin-top: 40px;
+    margin-top: 50px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;  
+    grid-gap: 50px;
+}
+
+.tools-container {
+
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;  
     grid-gap: 50px;
 }
 
@@ -26,6 +34,13 @@
     .skill-container {
 
         margin-top: 48px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;  
+    }
+
+    .tools-container {
+
+        margin-top: 50px;
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;  
     }
