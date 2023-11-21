@@ -2,8 +2,8 @@
 
     margin-top: 50px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;  
-    grid-gap: 50px;
+    grid-template-columns: 1fr 1fr 1fr 1fr;  
+    grid-gap: 20px;
 }
 
 .tools-container {
@@ -11,12 +11,12 @@
     margin-top: 50px;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;  
-    grid-gap: 50px;
+    grid-gap: 20px;
 }
 
 .skill-item {
-    width: 6rem;
-    height: 6rem;
+    width: 5rem;
+    height: 5rem;
     /* transition: width 0.3s, height 0.4s; */
     transition: transform .25s;
     margin: 0 auto;
