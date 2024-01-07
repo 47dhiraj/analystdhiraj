@@ -100,59 +100,77 @@
                     <code style="line-height: 1.8;">
 
                         # Import necessary libraries
+
                         import pandas as pd
-                        from scipy.stats import pearsonr
+                        import time
+                        # import joblib
+                        # import feather
 
-                        # Load the movie ratings dataset
+
                         ratings = pd.read_csv('ratings.csv')
+                        movies = pd.read_csv('movies.csv')
+                        ratings = pd.merge(movies,ratings).drop(['genres','timestamp'],axis=1) 
 
-                        # Create a user-movie matrix with NaN for missing values
-                        user_movie_matrix = ratings.pivot_table(index='user_id', columns='movie_id', values='rating')
 
-                        # Function to calculate Pearson correlation between two users
-                        def pearson_correlation(user1, user2):
-                            common_movies = user_movie_matrix.loc[user1].notna() & user_movie_matrix.loc[user2].notna()
-                            
-                            if common_movies.sum() == 0:
-                                return 0  # No common movies, correlation is undefined
-                            
-                            # Calculate Pearson correlation coefficient
-                            correlation_coefficient, _ = pearsonr(
-                                user_movie_matrix.loc[user1, common_movies],
-                                user_movie_matrix.loc[user2, common_movies]
-                            )
-                            
-                            return correlation_coefficient
+                        user_ratings = ratings.pivot_table(index=['userId'],columns=['title'],values='rating')
+                        
+                        ## Let's Remove Movies which have less than 10 users who rated it. and fill remaining NaN with 0
+                        user_ratings = user_ratings.dropna(thresh=2,axis=1).fillna(0)
 
-                        # Function to get top N movie recommendations for a user
-                        def get_movie_recommendations(user, N=5):
-                            # Find users with similar preferences using Pearson correlation
-                            similar_users = [(other_user, pearson_correlation(user, other_user)) for other_user in user_movie_matrix.index if user != other_user]
-                            
-                            # Sort users by correlation coefficient in descending order
-                            similar_users.sort(key=lambda x: x[1], reverse=True)
-                            
-                            # Get top N similar users
-                            top_users = similar_users[:N]
-                            
-                            # Initialize a dictionary to store movie recommendations and their scores
-                            recommendations = {}
-                            
-                            # Iterate through top users and their ratings
-                            for other_user, correlation in top_users:
-                                movies_not_watched = user_movie_matrix.loc[user].isna() & user_movie_matrix.loc[other_user].notna()
-                                
-                                # Multiply ratings by correlation coefficients and sum
-                                weighted_ratings = user_movie_matrix.loc[other_user, movies_not_watched] * correlation
-                                recommendations.update(weighted_ratings)
-                            
-                            # Sort recommendations by score in descending order
-                            sorted_recommendations = sorted(recommendations.items(), key=lambda x: x[1], reverse=True)
-                            
-                            # Get the top N movie recommendations
-                            top_recommendations = [movie for movie, _ in sorted_recommendations[:N]]
-                            
-                            return top_recommendations
+
+                        ## Building Similarity Matrix using Pearson Correlation Algorithm
+                        item_similarity_df = user_ratings.corr(method='pearson')
+                        item_similarity_df.to_csv(r'item_similarity_df.csv')
+
+
+                        ## First saving the model in pickle file format
+                        # item_similarity_df.to_pickle('item_similarity_df.pkl')
+
+
+                        start = time.time()
+
+                        item_similarity_df = pd.read_pickle('item_similarity_df.pkl')
+
+                        # Getting Similar movies 
+                        def get_similar_movies(movie_name,user_rating):  
+                            similar_score = item_similarity_df[movie_name]*(user_rating-2.5)
+                            similar_score = similar_score.sort_values(ascending=False)
+                            return similar_score
+                        
+                        
+                        # Checking if the movies is already seen or not
+                        def check_seen(movie, seen_movies):
+                            for item in seen_movies:
+                                if item == movie:
+                                    return True
+                            return False
+                        
+
+                        name = ['The Martian']
+                        scifi_lover = [("The Martian", 5)]
+                        # #romantic_lover = [("Titanic (1997)",5),("Up (2009)",4),("Up (2009)",4),("Kung Fu Panda (2008)",4)]
+                        
+                        similar_movies = pd.DataFrame()         # Empty datafram banayeko
+                        
+                        for movie,rating in scifi_lover:
+                            similar_movies = similar_movies.append(get_similar_movies(movie,rating),ignore_index=True)
+                        
+                        all_recommend = similar_movies.sum().sort_values(ascending=False)
+                         
+                         
+                        
+                        i = 0
+                        for movie, score in all_recommend.iteritems():
+                            if not check_seen(movie, name):
+                                print(movie,'\t\t\t\t\t',  score)
+                        
+                            i = i + 1
+                            if i >= 36 + len(name):
+                                break
+                        
+                        end = time.time()
+                        
+                        print("Time Taken: ", end-start)
 
                     </code>
 
