@@ -1,0 +1,291 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+    <title> DHIRAJ KAFLE </title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+    
+    <link rel="icon" href="../../images/avatar.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../../images/avatar.png" type="image/x-icon">
+
+    <noscript>
+        <link rel="stylesheet" href="../../assets/css/noscript.css" />
+    </noscript>
+
+
+    <style>
+        pre {
+            background-color: #f4f4f4;
+            /* padding: 5px; */
+            overflow: auto;
+
+        }
+
+        code {
+            font-family: "SFMono-Regular", "Menlo", "Consolas", "PT Mono", "Liberation Mono", Courier, monospace;
+            /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
+            /* font-family: Arial, Helvetica, sans-serif; */
+            font-weight: 600;
+            font-size: small;
+            display: block;
+            /* padding: 5px; */
+            color: #272727;
+
+        }
+    </style>
+
+</head>
+
+
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <a href="../../cv/cv.pdf" class="logo" target="_blank"> View CV </a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+
+            <ul class="links">
+                <!-- <li><a href="../../index.html"> Projects </a></li> -->
+                <li><a href="../.."> Projects </a></li>
+
+                <li><a href="../skills.html"> Skills </a></li>
+                <li><a href="../about.html"> About </a></li>
+                <li class="active"><a href="." style="pointer-events: none"> Detail </a></li>
+            </ul>
+
+            <ul class="icons">
+                <li><a href="#" class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+            </ul>
+        </nav>
+
+
+        <!-- Main -->
+        <div id="main">
+
+            <!-- Post -->
+            <section class="post">
+
+                <header class="major">
+
+                    <!-- <span class="date">March 19, 2020</span> -->
+
+                    <h1>
+                        Item Based Collaborative Filtering <br />
+                        Pearson Correlation
+                    </h1>
+
+                    <p>
+                        Scraped the IMDB Site using BeautifulSoup <br />
+                        EDA and Data Cleaning using Pandas & Excel <br />
+                    </p>
+
+                </header>
+
+
+                <div class="image main"><img src="../../images/projects/features/movie_site.png" alt="Movie Site" /></div>
+
+
+                <p style="text-align: center;">
+                    IMDB site scraping code using <b> BeautifulSoup </b>.<br />
+
+                    Done <b>EDA</b> & <b>Data Cleaning</b> mostly using <b>Pandas</b> & also <b>Excel</b>.<br />
+
+                    Built the <b>ML model</b> using <b>Scikit-learn</b>.<br />
+
+                    Finally, built the movie site using <b>Django</b>.<br />
+                </p>
+
+
+                <h4>Recommendation model's code 🚀 </h4>
+                <pre>
+
+                    <code style="line-height: 1.8;">
+
+                        # Import necessary libraries
+
+                        import pandas as pd
+                        import time
+                        # import joblib
+                        # import feather
+
+
+                        ratings = pd.read_csv('ratings.csv')
+                        movies = pd.read_csv('movies.csv')
+                        ratings = pd.merge(movies,ratings).drop(['genres','timestamp'],axis=1) 
+
+
+                        user_ratings = ratings.pivot_table(index=['userId'],columns=['title'],values='rating')
+                        
+                        ## Let's Remove Movies which have less than 10 users who rated it. and fill remaining NaN with 0
+                        user_ratings = user_ratings.dropna(thresh=2,axis=1).fillna(0)
+
+
+                        ## Building Similarity Matrix using Pearson Correlation Algorithm
+                        item_similarity_df = user_ratings.corr(method='pearson')
+                        item_similarity_df.to_csv(r'item_similarity_df.csv')
+
+
+                        ## First saving the model in pickle file format
+                        # item_similarity_df.to_pickle('item_similarity_df.pkl')
+
+
+                        start = time.time()
+
+                        item_similarity_df = pd.read_pickle('item_similarity_df.pkl')
+
+                        # Getting Similar movies 
+                        def get_similar_movies(movie_name,user_rating):  
+                            similar_score = item_similarity_df[movie_name]*(user_rating-2.5)
+                            similar_score = similar_score.sort_values(ascending=False)
+                            return similar_score
+                        
+                        
+                        # Checking if the movies is already seen or not
+                        def check_seen(movie, seen_movies):
+                            for item in seen_movies:
+                                if item == movie:
+                                    return True
+                            return False
+                        
+
+                        name = ['The Martian']
+                        scifi_lover = [("The Martian", 5)]
+                        # #romantic_lover = [("Titanic (1997)",5),("Up (2009)",4),("Up (2009)",4),("Kung Fu Panda (2008)",4)]
+                        
+                        similar_movies = pd.DataFrame()         # Empty datafram banayeko
+                        
+                        for movie,rating in scifi_lover:
+                            similar_movies = similar_movies.append(get_similar_movies(movie,rating),ignore_index=True)
+                        
+                        all_recommend = similar_movies.sum().sort_values(ascending=False)
+                         
+                         
+                        
+                        i = 0
+                        for movie, score in all_recommend.iteritems():
+                            if not check_seen(movie, name):
+                                print(movie,'\t\t\t\t\t',  score)
+                        
+                            i = i + 1
+                            if i >= 36 + len(name):
+                                break
+                        
+                        end = time.time()
+                        
+                        print("Time Taken: ", end-start)
+
+                    </code>
+
+
+                </pre>
+
+
+                <!-- <p> Continue to write .. </p> -->
+
+
+            </section>
+
+        </div>
+
+
+        <!-- Footer -->
+        <footer id="footer">
+
+            <section class="split contact">
+
+                <section class="alt">
+                    <h3 style="color: #53595f;">Address</h3>
+                    <p>Maitidevi<br />
+                        Kathmandu, Nepal</p>
+                </section>
+
+                <section>
+                    <h3 style="color: #53595f;">Phone</h3>
+                    <p><a href="#"> +977 9847122181 </a></p>
+                </section>
+
+                <section>
+                    <h3 style="color: #53595f;">Email</h3>
+                    <p><a href="#">dhirajkafle553@gmail.com</a></p>
+                </section>
+
+                <section>
+                    <h3 style="color: #53595f;">Social</h3>
+
+                    <ul class="icons alt">
+                        <li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a>
+                        </li>
+                        <li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a>
+                        </li>
+                        <li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+                    </ul>
+
+                </section>
+
+            </section>
+
+
+            <section>
+
+                <form method="post" action="#">
+
+                    <div class="fields">
+                        <div class="field">
+                            <label for="name" style="color: #53595f;">Name</label>
+                            <input type="text" name="name" id="name" />
+                        </div>
+                        <div class="field">
+                            <label for="email" style="color: #53595f;">Email</label>
+                            <input type="text" name="email" id="email" />
+                        </div>
+                        <div class="field">
+                            <label for="message" style="color: #53595f;">Message</label>
+                            <textarea name="message" id="message" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="submit" value="Send Message" /></li>
+                    </ul>
+
+                </form>
+
+            </section>
+
+
+        </footer>
+
+
+        <!-- Copyright -->
+        <div id="copyright">
+            <ul>
+                <li>&copy; 2023 - DhirajTheAnalyst</li>
+                <!-- <li>Designer: <a href="#"></a></li> -->
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/jquery.min.js"></script>
+    <script src="../../assets/js/jquery.scrollex.min.js"></script>
+    <script src="../../assets/js/jquery.scrolly.min.js"></script>
+    <script src="../../assets/js/browser.min.js"></script>
+    <script src="../../assets/js/breakpoints.min.js"></script>
+    <script src="../../assets/js/util.js"></script>
+
+    <script src="../../assets/js/main.js"></script>
+
+</body>
+
+</html>
