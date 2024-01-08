@@ -112,7 +112,8 @@
 					</header>
 
 					<a href="view/projects/eda_and_data_cleaning.html" class="image fit">
-						<img src="images/projects/thumbnails/pandas.png" style="max-height: 280px; max-width: 400px; margin: auto;" alt="Pandas Logo" />
+						<img src="images/projects/thumbnails/pandas.png"
+							style="max-height: 280px; max-width: 400px; margin: auto;" alt="Pandas Logo" />
 					</a>
 
 					<p style="text-align: center;">Exploratory Data Analysis (EDA) <br />
@@ -140,7 +141,8 @@
 					</header>
 
 					<a href="view/projects/fixing_missing_values.html" class="image fit">
-						<img src="images/projects/thumbnails/pandas.png" style="max-height: 280px; max-width: 400px; margin: auto;" alt="Pandas Logo" />
+						<img src="images/projects/thumbnails/pandas.png"
+							style="max-height: 280px; max-width: 400px; margin: auto;" alt="Pandas Logo" />
 					</a>
 
 					<p style="text-align: center;"> Finding & Fixing Mising Values <br />
@@ -168,7 +170,8 @@
 					</header>
 
 					<a href="view/projects/powerbi_analytics.html" class="image fit">
-						<img src="images/projects/thumbnails/Power_BI.png" style="max-height: 280px; max-width: 400px; margin: auto;" alt="Power BI  Logo" />
+						<img src="images/projects/thumbnails/Power_BI.png"
+							style="max-height: 280px; max-width: 400px; margin: auto;" alt="Power BI  Logo" />
 					</a>
 
 					<p style="text-align: center;">Data Analysis with PowerBI</p>
@@ -186,14 +189,15 @@
 
 						<!-- <span class="date">December, 2023</span> -->
 
-					<h2><a href="view/projects/tableau_analytics.html">Data Analytics<br />
-							with Tableau</a>
-					</h2>
+						<h2><a href="view/projects/tableau_analytics.html">Data Analytics<br />
+								with Tableau</a>
+						</h2>
 
 					</header>
 
 					<a href="view/projects/tableau_analytics.html" class="image fit">
-						<img src="images/projects/thumbnails/Tableau.png" style="max-height: 280px; max-width: 400px; margin: auto;" alt="" />
+						<img src="images/projects/thumbnails/Tableau.png"
+							style="max-height: 280px; max-width: 400px; margin: auto;" alt="" />
 					</a>
 
 					<p style="text-align: center;">Data Analysis with Tableau</p>
@@ -215,13 +219,14 @@
 						<h2>
 							<a href="#">Data Manipulation <br />
 								with SQL
-								</a>
+							</a>
 						</h2>
 
 					</header>
 
 					<a href="#" class="image fit">
-						<img src="images/projects/thumbnails/SQL.png" style="max-height: 280px; max-width: 400px; margin: auto;" alt="SQL Logo" />
+						<img src="images/projects/thumbnails/SQL.png"
+							style="max-height: 280px; max-width: 400px; margin: auto;" alt="SQL Logo" />
 					</a>
 
 					<p style="text-align: center;">Data cleaning with Structured Query Language</p>
@@ -233,7 +238,7 @@
 				</article>
 
 
-				
+
 				<article>
 
 					<header>
@@ -248,7 +253,8 @@
 					</header>
 
 					<a href="#" class="image fit">
-						<img src="images/projects/thumbnails/Excel.png" style="max-height: 280px; max-width: 400px; margin: auto;" alt="Excel Logo" />
+						<img src="images/projects/thumbnails/Excel.png"
+							style="max-height: 280px; max-width: 400px; margin: auto;" alt="Excel Logo" />
 					</a>
 
 					<p style="text-align: center;">Dynamic pivot table with slicer</p>
@@ -338,7 +344,7 @@
 						</div>
 					</div>
 					<ul class="actions">
-						<li><input type="submit" value="Send Message" /></li>
+						<li><input type="submit" value="Send Message" disabled onclick="return preventSubmit();" /></li>
 					</ul>
 
 				</form>
@@ -357,6 +363,19 @@
 		</div>
 
 	</div>
+
+	<!-- Send Message Button Custom Script -->
+	<script>
+
+		function preventSubmit() {
+			// Add any validation logic here if needed
+			// For example, check if the form is valid
+
+			// If you want to prevent the form submission, return false
+			return false;
+		}
+
+	</script>
 
 	<!-- Scripts -->
 	<script src="assets/js/jquery.min.js"></script>
