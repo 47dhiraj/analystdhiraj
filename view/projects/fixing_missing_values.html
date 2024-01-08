@@ -103,7 +103,7 @@
 
 
                 <p style="text-align: left;">
-                    <b> <i><u> Several ways to fix missing values while preprocessing the data 🚀 </i></u></b><br />
+                    <b> <i>## Several ways to fix missing values while preprocessing the data 🚀 </i></b><br />
 
                     <b>* Fill missing values with Median or Mean/Average value</b> <br />
 
@@ -117,6 +117,39 @@
                     </br>
 
                     <b>* Fill missing values with a constant value </b> <br />
+
+                </p>
+
+
+                <p style="text-align: left;">
+                    <b> <i>## Some panda's methods to find/view missing values (NaN, None) 🚀 </i></b><br />
+
+                    <b>* .isna().sum()</b> <br />
+
+                    <b>* .isnull().sum()</b><br />
+
+                    <b>* .unique() => It doesn't work as desired, for the numeric column.</b><br />
+
+                    <b>* .value_counts()</b><br />
+
+                </p>
+
+
+                <p style="text-align: left;">
+                    <b> <i>## Some panda's methods to fix missing values 🚀 </i></b><br />
+
+                    <b>* .fillna()</b> <br />
+                    <b>Examples:</b><br />
+                    .fillna('1', inplace=True) # Fill all Nan values with 1<br /><br />
+
+                    <b>* .dropna()</b> <br />
+                    <b> Examples:</b><br />
+                    df.dropna()         # Drops rows containing NaN values<br />
+                    df.dropna(axis=1)   # Drops columns containing NaN values<br /><br />
+
+                    <b>* .replace()</b> <br />
+                    <b> Examples:</b><br />
+                    df.replace(np.nan, 0)  # Replace NaN with 0<br />
 
                 </p>
 
