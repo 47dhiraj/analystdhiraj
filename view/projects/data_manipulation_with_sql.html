@@ -1,0 +1,474 @@
+<!DOCTYPE HTML>
+
+<html>
+
+<head>
+
+    <title> DHIRAJ KAFLE </title>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="../../assets/css/main.css" />
+
+    <link rel="icon" href="../../images/avatar.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../../images/avatar.png" type="image/x-icon">
+
+    <noscript>
+        <link rel="stylesheet" href="../../assets/css/noscript.css" />
+    </noscript>
+
+
+    <style>
+        pre {
+            background-color: #f4f4f4;
+            /* padding: 5px; */
+            overflow: auto;
+
+        }
+
+        code {
+            font-family: "SFMono-Regular", "Menlo", "Consolas", "PT Mono", "Liberation Mono", Courier, monospace;
+            /* font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif; */
+            /* font-family: Arial, Helvetica, sans-serif; */
+            font-weight: 600;
+            font-size: small;
+            display: block;
+            /* padding: 5px; */
+            color: #272727;
+
+        }
+    </style>
+
+</head>
+
+
+<body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Header -->
+        <header id="header">
+            <a href="../../cv/cv.pdf" class="logo" target="_blank"> View CV </a>
+        </header>
+
+        <!-- Nav -->
+        <nav id="nav">
+
+            <ul class="links">
+                <!-- <li><a href="../../index.html"> Projects </a></li> -->
+                <li><a href="../.."> Projects </a></li>
+
+                <li><a href="../skills.html"> Skills </a></li>
+                <li><a href="../about.html"> About </a></li>
+                <li class="active"><a href="." style="pointer-events: none"> Detail </a></li>
+            </ul>
+
+            <ul class="icons">
+                <li><a href="https://github.com/47dhiraj/analytics_projects/tree/main/sql/Data%20Cleaning/Nashville%20Housing%20Project"
+                        class="icon brands fa-github" target="_blank"><span class="label">GitHub</span></a></li>
+            </ul>
+        </nav>
+
+
+        <!-- Main -->
+        <div id="main">
+
+            <!-- Post -->
+            <section class="post">
+
+                <header class="major">
+
+                    <!-- <span class="date">March 19, 2020</span> -->
+
+                    <h1>
+                        Data Transformation <br />
+                        with SQL
+                    </h1>
+
+                </header>
+
+
+                <div class="image main"><img src="../../images/projects/features/Sql.png" alt="SQL Image" />
+                </div>
+
+                <blockquote>
+                    <p style="text-align: center;">
+                        Data <b>transformation/cleaning</b> with <b> Structured Query Language (SQL) </b><br />
+                    </p>
+                </blockquote>
+
+
+                <h4> SQL for Data Cleaning 🚀 </h4>
+                <pre>
+
+                    <code style="line-height: 1.8;">
+
+                        /*
+                        Data Cleaning using SQL Queries
+                        */
+
+                        -- For retrieving/selecting all Data 
+                        select * from portfolioproject.nashvillehousing;
+
+                        -- For Selecting only particular column
+                        select SaleDate from portfolioproject.nashvillehousing;
+
+
+
+                        --------------------------------------------------------------------------------------------------------------------------
+
+                        -- Standardize Date Format (i.e Converting String Date Format to actual Date Format)
+                        SELECT SaleDate, DATE_FORMAT(STR_TO_DATE(SaleDate, '%M %d, %Y'), '%Y-%m-%d') AS formatted_date
+                        FROM PortfolioProject.nashvillehousing;
+
+
+                        -- To Actually make Changes/Update the existing saleDate column by Date Formatted column data
+                        UPDATE PortfolioProject.nashvillehousing
+                        SET SaleDate = DATE_FORMAT(STR_TO_DATE(SaleDate, '%M %d, %Y'), '%Y-%m-%d');
+
+
+                        --------------------------------------------------------------------------------------------------------------------------
+
+                        -- Select/Populate Property Address data
+                        select PropertyAddress from portfolioproject.nashvillehousing;
+
+                        --------------------------------------------------------------------------------------------------------------------------
+
+
+                        -- Finding if there is NULL value in any sepecific column(eg: PropertyAddress) or not
+                        select PropertyAddress from portfolioproject.nashvillehousing where PropertyAddress is null;
+
+                        -- Easy way of filling NULL values
+                        UPDATE portfolioproject.nashvillehousing SET PropertyAddress = 'No PropertyAddress' WHERE PropertyAddress IS NULL;
+
+
+                        -- Advance way of replacing Null value of a column by another column value
+                        -- For finding if there is NULL in any column due to repetation of data in subsequent another row
+                        SELECT a.ParcelID, a.PropertyAddress, b.ParcelID, b.PropertyAddress, 
+                        COALESCE(a.PropertyAddress, b.PropertyAddress)                          
+                        FROM PortfolioProject.NashvilleHousing a
+                        JOIN PortfolioProject.NashvilleHousing b ON a.ParcelID = b.ParcelID 
+                        AND a.`UniqueID` <> b.`UniqueID`                                        
+                        WHERE a.PropertyAddress IS NULL;                              
+
+                        -- Actually updating/making the changes
+                        UPDATE PortfolioProject.NashvilleHousing a
+                        JOIN PortfolioProject.NashvilleHousing b ON a.ParcelID = b.ParcelID
+                        AND a.`UniqueID` <> b.`UniqueID`
+                        SET a.PropertyAddress = COALESCE(a.PropertyAddress, b.PropertyAddress) 
+                        WHERE a.PropertyAddress IS NULL;
+
+
+                        --------------------------------------------------------------------------------------------------------------------------
+
+                        -- Breaking/Seperating out Property Address into two seperate/individual Columns like (Street, City) 
+
+                        SELECT 
+                        SUBSTRING_INDEX(PropertyAddress, ',', 1) AS Street,
+                        TRIM(SUBSTRING_INDEX(PropertyAddress, ',', -1)) AS City
+                        FROM 
+                        portfolioproject.nashvillehousing;
+
+                        ```
+                        Here's a breakdown of the query:
+                        SUBSTRING_INDEX(PropertyAddress, ',', 1): This extracts the part of the address before the first comma.
+                        TRIM(SUBSTRING_INDEX(PropertyAddress, ',', -1)): This extracts the part of the address after the last comma and removes any leading or trailing spaces using the TRIM() function.
+                        ```
+
+                        -- Update/Changes by keeping previous Address column untouched and creating two new columns Street and City
+
+                        -- # 1st) For PropertyAddress
+
+                        -- First adding new 'PropertyStreet' column
+                        alter table portfolioproject.nashvillehousing
+                        add PropertyStreet Nvarchar(255);
+
+                        -- Secondly, adding new 'PropertyCity' column
+                        alter table portfolioproject.nashvillehousing
+                        add PropertyCity Nvarchar(255);
+
+
+                        -- (For MySQL database) Actual query to save the seperated address to Street and City column
+                        UPDATE portfolioproject.nashvillehousing
+                        SET PropertyStreet = SUBSTRING_INDEX(PropertyAddress, ',', 1),
+                        PropertyCity = TRIM(SUBSTRING_INDEX(PropertyAddress, ',', -1));
+
+                        -- (For Microsoft SQL Server) Actual query to save the seperated address to Street and City column
+                        UPDATE portfolioproject.nashvillehousing
+                        SET PropertyStreet = LEFT(PropertyAddress, CHARINDEX(',', PropertyAddress + ',') - 1),
+                        PropertyCity = LTRIM(RTRIM(SUBSTRING(PropertyAddress, CHARINDEX(',', PropertyAddress) + 1, LEN(PropertyAddress))));
+
+
+
+
+                        -- # 2nd) For OwnerAddress
+
+                        -- First adding new 'OwnerStreet' column
+                        alter table portfolioproject.nashvillehousing
+                        add OwnerStreet Nvarchar(255);
+
+                        -- Second, adding new 'OwnerCity' column
+                        alter table portfolioproject.nashvillehousing
+                        add OwnerCity Nvarchar(255);
+
+                        -- Third, adding new 'OwnerState' column
+                        alter table portfolioproject.nashvillehousing
+                        add OwnerState Nvarchar(255);
+
+
+                        -- (For MySQL Database) Actual query to save the seperated address to Street, City and State columns
+                        UPDATE portfolioproject.nashvillehousing
+                        SET 
+                        OwnerStreet = SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(OwnerAddress, ',', '.'), '.', -3), '.', 1),
+                        OwnerCity = SUBSTRING_INDEX(SUBSTRING_INDEX(REPLACE(OwnerAddress, ',', '.'), '.', -2), '.', 1),
+                        OwnerState = SUBSTRING_INDEX(REPLACE(OwnerAddress, ',', '.'), '.', -1);
+
+
+                        ```
+                        This MySQL query uses REPLACE to replace commas with dots and then SUBSTRING_INDEX to extract the desired parts.
+                        The negative values in SUBSTRING_INDEX represent counting from the end of the string. 
+                        The -1 gets the last part, the -2 gets the second last part and -2 gets the first part (i.e seperating in reverse order because we want to sepearte in reverse way).
+
+                        NOTE: MySQL uses 1-based indexing for SUBSTRING_INDEX.
+                        ```
+
+
+                        -- (For Microsoft SQL Server) Actual query to save the seperated address to OwnerStreet, OwnerCity and OwnerState columns
+                        UPDATE PortfolioProject.dbo.NashvilleHousing
+                        SET 
+                        OwnerStreet = PARSENAME(REPLACE(OwnerAddress, ',', '.'), 3)
+                        OwnerCity = PARSENAME(REPLACE(OwnerAddress, ',', '.'), 2),
+                        OwnerState = PARSENAME(REPLACE(OwnerAddress, ',', '.'), 1);
+
+
+
+                        --------------------------------------------------------------------------------------------------------------------------
+
+                        -- Change Y and N to Yes and No in "SoldAsVacant" field
+
+
+                        -- First doing GroupBy counting  (For having better understanding before doing something)
+                        SELECT distinct(SoldAsVacant), COUNT(SoldAsVacant) AS CountSoldAsVacant
+                        FROM PortfolioProject.NashvilleHousing
+                        GROUP BY SoldAsVacant
+                        ORDER BY CountSoldAsVacant;
+
+
+                        -- Now, (For MySQL) Actually changing Y to Yes and N to No, using CASE statment
+                        UPDATE PortfolioProject.NashvilleHousing
+                        SET SoldAsVacant = CASE 
+                                        WHEN SoldAsVacant = 'Y' THEN 'Yes'
+                                        WHEN SoldAsVacant = 'N' THEN 'No'
+                                        ELSE SoldAsVacant
+                                    END;
+
+                        -- Alternative(For Microsof SQL Server) Actually changing Y to Yes and N to No, using CASE statment
+                        Update PortfolioProjectNashvilleHousing
+                        SET SoldAsVacant = CASE 
+                                        When SoldAsVacant = 'Y' THEN 'Yes'
+                                        When SoldAsVacant = 'N' THEN 'No'
+                                        ELSE SoldAsVacant
+                                    END;
+
+
+                        -- Finally, u can see/visualize if changed properly or not like earlier
+                        SELECT distinct(SoldAsVacant), COUNT(SoldAsVacant) AS CountSoldAsVacant
+                        FROM PortfolioProject.NashvilleHousing
+                        GROUP BY SoldAsVacant
+                        ORDER BY CountSoldAsVacant;
+
+
+                        -----------------------------------------------------------------------------------------------------------------------------------------------------------
+                       
+                        -- Only selecting Distinct Rows from table
+                        -- (also a good way to remove Duplicate Rows)
+                        SELECT DISTINCT * FROM your_table;
+
+
+                        -- More risky way of removing Duplicates (i.e  keep a single instance of each set of duplicate rows and remove the rest)
+                        -- Removing Duplicates is rarely used in SQL (and it is risky deleting data too)
+
+                        -- MYSQL SYNTAX: 
+                        ```
+                        DELETE FROM your_table
+                        WHERE (column1, column2, column3) IN (
+                            SELECT column1, column2, column3
+                            FROM (
+                                SELECT
+                                    column1,
+                                    column2,
+                                    column3,
+                                    ROW_NUMBER() OVER (PARTITION BY column1, column2, column3 ORDER BY id) AS row_num
+                                FROM your_table
+                            ) AS t
+                            WHERE row_num > 1
+                        );
+                        ```
+
+                        -- MySQL Example: 
+                        DELETE FROM portfolioproject.nashvillehousing
+                        WHERE (ParcelID, PropertyAddress, SalePrice, LegalReference) IN (
+                        SELECT ParcelID, PropertyAddress, SalePrice, LegalReference
+                        FROM (
+                            SELECT
+                                ParcelID,
+                                PropertyAddress,
+                                SalePrice,
+                                LegalReference,
+                                ROW_NUMBER() OVER (PARTITION BY ParcelID, PropertyAddress, SalePrice, LegalReference ORDER BY UniqueID) AS row_num
+                            FROM portfolioproject.nashvillehousing
+                        ) AS t
+                        WHERE row_num > 1
+                        );
+
+
+                        ---------------------------------------------------------------------------------------------------------
+
+                        -- Delete unnecessary/not required/unused Columns
+
+                        -- Visualize all column before deleting
+                        Select * From PortfolioProject.NashvilleHousing
+
+                        -- Actual query to Drop/Delete multiple unrequired columns at once
+                        ALTER TABLE PortfolioProject.NashvilleHousing
+                        DROP COLUMN OwnerAddress,
+                        DROP COLUMN PropertyAddress,
+                        DROP COLUMN TaxDistrict,
+                        DROP COLUMN SaleDate;
+
+                        -- see if the colulmns are deleted
+                        Select * From PortfolioProject.NashvilleHousing
+
+
+                        ---------------------------------------------------------------------------------------------------------
+                        -- Standardizing Text Data
+
+                        -- To Upper case (capital letter)
+                        UPDATE portfolioproject.nashvillehousing SET LandUse = UPPER(LandUse);
+
+                        -- To Lower case (small letter)
+                        UPDATE portfolioproject.nashvillehousing SET LandUse = LOWER(LandUse);
+
+
+                        -- To camel case (first letter capital, other small letter)
+
+                        -- SYNTAX:
+                        UPDATE portfolioproject.nashvillehousing
+                        SET column_name = CONCAT(
+                        UPPER(SUBSTRING(column_name, 1, 1)),
+                        LOWER(SUBSTRING(column_name, 2, CHAR_LENGTH(column_name) - 1))
+                        );
+
+                        -- EXAMPLE:
+                        UPDATE portfolioproject.nashvillehousing
+                        SET LandUse = CONCAT(
+                        UPPER(SUBSTRING(LandUse, 1, 1)),
+                        LOWER(SUBSTRING(LandUse, 2, CHAR_LENGTH(LandUse) - 1))
+                        );
+
+
+                    </code>
+
+
+                </pre>
+
+
+                <!-- <p> Continue to write .. </p> -->
+
+
+            </section>
+
+        </div>
+
+
+        <!-- Footer -->
+        <footer id="footer">
+
+            <section class="split contact">
+
+                <section class="alt">
+                    <h3 style="color: #53595f;">Address</h3>
+                    <p style="color: #4b4847;">Maitidevi<br />
+                        Kathmandu, Nepal</p>
+                </section>
+
+                <section>
+                    <h3 style="color: #53595f;">Phone</h3>
+                    <p><a href="#" style="color: #4b4847;"> +977 9847122181 </a></p>
+                </section>
+
+                <section>
+                    <h3 style="color: #53595f;">Email</h3>
+                    <p><a href="#" style="color: #4b4847;">dhirajkafle553@gmail.com</a></p>
+                </section>
+
+                <section>
+                    <h3 style="color: #53595f;">Social</h3>
+
+                    <ul class="icons alt">
+                        <li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a>
+                        </li>
+                        <li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a>
+                        </li>
+                        <li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+                    </ul>
+
+                </section>
+
+            </section>
+
+
+            <section>
+
+                <form method="post" action="#">
+
+                    <div class="fields">
+                        <div class="field">
+                            <label for="name" style="color: #53595f;">Name</label>
+                            <input type="text" name="name" id="name" />
+                        </div>
+                        <div class="field">
+                            <label for="email" style="color: #53595f;">Email</label>
+                            <input type="text" name="email" id="email" />
+                        </div>
+                        <div class="field">
+                            <label for="message" style="color: #53595f;">Message</label>
+                            <textarea name="message" id="message" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <ul class="actions">
+                        <li><input type="submit" value="Send Message" disabled /></li>
+                    </ul>
+
+                </form>
+
+            </section>
+
+
+        </footer>
+
+
+        <!-- Copyright -->
+        <div id="copyright">
+            <ul>
+                <li>&copy; 2023 - DhirajTheAnalyst</li>
+                <!-- <li>Designer: <a href="#"></a></li> -->
+            </ul>
+        </div>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/jquery.min.js"></script>
+    <script src="../../assets/js/jquery.scrollex.min.js"></script>
+    <script src="../../assets/js/jquery.scrolly.min.js"></script>
+    <script src="../../assets/js/browser.min.js"></script>
+    <script src="../../assets/js/breakpoints.min.js"></script>
+    <script src="../../assets/js/util.js"></script>
+
+    <script src="../../assets/js/main.js"></script>
+
+</body>
+
+</html>
